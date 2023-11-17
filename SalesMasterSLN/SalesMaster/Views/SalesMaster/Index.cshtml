@@ -1,0 +1,53 @@
+﻿
+
+@model IEnumerable<SalesMasterTable>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h4 class="mt-3">Sales List</h4>
+
+    <form method="get" action="@Url.Action("Index", "SalesMaster")">
+        <div class="form-group mt-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search by name, mobile, or invoice number">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row mt-3">
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                <div class="card"> 
+                    <div class="card-body">
+                        <h5 class="card-title">@Html.DisplayFor(m => item.CustomerName)</h5>
+                        <p class="card-text">
+                            <b>Invoice Number:</b> @Html.DisplayFor(m => item.InvoiceNumber)<br />
+                            <b>Mobile:</b> @Html.DisplayFor(m => item.MobileNo)<br />
+                            <b>Address:</b> @Html.DisplayFor(m => item.Address)<br />
+                        </p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @Html.Partial("_IndexSalesdetailsTable", item)
+                        <li class="list-group-item">
+                            <b>Total Unit Price:</b> @item.SalesDetails.Sum(module => module.Price) Taka
+                        </li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="@Url.Action("Edit", "SalesMaster", new { id = item.Id })" class="btn btn-secondary mr-2">Edit</a>
+                        <a href="@Url.Action("Delete", "SalesMaster", new { id = item.Id })" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Create", "SalesMaster")" id="btnCreate" class="btn btn-primary">Add Sales Master Info</a>
+    </div>
+</div>

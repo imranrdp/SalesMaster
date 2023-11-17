@@ -1,0 +1,124 @@
+﻿@model SalesmasterViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<hr />
+<div class="card">
+    <div class="card-header">
+        <h4 style="text-align:center">Update Sales Info</h4>
+    </div>
+    <form id="editForm" asp-action="Edit" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-6">
+                @Html.HiddenFor(x => x.SalesMasterId)
+                <div class="form-group">
+                    <label asp-for="CustomerName" class="control-label"></label>
+                    <input asp-for="CustomerName" class="form-control" />
+                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="InvoiceNumber" class="control-label"></label>
+                    <input asp-for="InvoiceNumber" class="form-control" />
+                    <span asp-validation-for="InvoiceNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MobileNo" class="control-label"></label>
+                    <input asp-for="MobileNo" class="form-control" />
+                    <span asp-validation-for="MobileNo" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+               
+            </div>
+            <div class="col-6">
+                <div class="col-md-12">
+                    <h5 style="text-align:center">Edit Details</h5>
+                    <div id="detailsTableContainer">
+                        @Html.Partial("_DetailsTable", Model.SalesDetails)
+                    </div>
+                    <div class="form-group" style="text-align: center;">
+                        <button type="button" class="btn btn-primary" onclick="AddProduct()">Add More Product</button>
+                    </div>
+                </div>
+                <input type="hidden" id="hdnLastIndex" value="0" />
+            </div>
+            <div class="col-6-group text-right p-2">
+                <a asp-action="Index" class="btn btn-secondary">&nbsp;Back to List&nbsp;</a>
+                <input id="submitForm" type="submit" value="Update Sales Info" class="btn btn-primary" />
+            </div>
+        </div>
+    </form>
+</div>
+<script src="~/jquery/jquery.min.js"></script>
+<script src="~/jquery/jquery.min.js"></script>
+<script>
+
+
+    function DeleteItem(btn) {
+        var row = $(btn).closest('tr');
+        row.remove();
+
+        var rows = $("#ExpTable tbody tr");
+        for (var i = 0; i < rows.length; i++) {
+            $(rows[i]).find('input[name^="SalesDetails"]').each(function () {
+                var oldName = $(this).attr('name');
+                var newName = oldName.replace(/\[\d+\]/, "[" + i + "]");
+                $(this).attr('name', newName);
+            });
+        }
+
+        var lastIndex = parseInt($("#hdnLastIndex").val());
+        if (lastIndex > 0) {
+            $("#hdnLastIndex").val(lastIndex - 1);
+        }
+    }
+
+
+    function AddProduct() {
+        var lastRowIndex = parseInt($("#hdnLastIndex").val());
+        var newRow =
+            '<tr>' +
+            '<td><input type="text" class="form-control" name="SalesDetails[' + lastRowIndex + '].ProductCode" /></td>' +
+            '<td><input type="text" class="form-control" name="SalesDetails[' + lastRowIndex + '].ProductName" /></td>' +
+            '<td><input type="number" class="form-control" name="SalesDetails[' + lastRowIndex + '].Price" /></td>' +
+            '<td><input type="number" class="form-control" name="SalesDetails[' + lastRowIndex + '].Quantity" /></td>';
+        if (lastRowIndex > 0) {
+            newRow += '<td><button type="button" class="btn btn-danger" onclick="DeleteItem(this)">Remove</button></td>';
+        } else {
+            newRow += '<td></td>';
+        }
+
+        newRow += '</tr>';
+
+        $("#ExpTable tbody").append(newRow);
+        $("#hdnLastIndex").val(lastRowIndex + 1);
+
+        if (lastRowIndex === 0) {
+            $(".add-module-button").hide();
+        }
+    }
+
+
+    $("#submitForm").click(function () {
+        var formData = new FormData(document.getElementById("editForm"));
+
+        $.ajax({
+            type: "post",
+            url: "/SalesMaster/Edit",
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                alert("Edited");
+            },
+            error: function (err) {
+                alert("Error Occurred");
+            }
+        });
+    });
+</script>

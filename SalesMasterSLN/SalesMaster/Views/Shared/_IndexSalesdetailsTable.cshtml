@@ -1,0 +1,23 @@
+﻿@model SalesMasterTable
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Product Code</th>
+            <th>Product Name</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var exp in Model.SalesDetails)
+        {
+            <tr>
+                <td>@Html.DisplayFor(e => exp.ProductCode)</td>
+                <td>@Html.DisplayFor(e => exp.ProductName)</td>
+                <td>@Html.DisplayFor(e => exp.Price)</td>
+                <td>@Html.DisplayFor(e => exp.Quantity)</td>
+            </tr>
+        }
+    </tbody>
+</table>

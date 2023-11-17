@@ -1,0 +1,99 @@
+﻿@model SalesmasterViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<hr />
+<div class="card">
+    <div class="card-header bg-primary text-uppercase text-white" style="height:45px">
+        <h4>Add Sales  Info</h4>
+    </div>
+    <form id="createForm" asp-action="Create" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="CustomerName" class="control-label"></label>
+                    <input asp-for="CustomerName" class="form-control" />
+                    <span asp-validation-for="CustomerName" class="text-danger"></span>
+                </div>
+            </div>
+           
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="InvoiceNumber" class="control-label"></label>
+                    <input asp-for="InvoiceNumber" class="form-control" />
+                    <span asp-validation-for="InvoiceNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="MobileNo" class="control-label"></label>
+                    <input asp-for="MobileNo" class="form-control" />
+                    <span asp-validation-for="MobileNo" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div id="detailsTableContainer">
+                    @Html.Partial("_DetailsTable", Model.SalesDetails)
+                </div>
+                <div class="form-group" style="text-align: center;">
+                    <button type="button" class="btn btn-primary" onclick="AddProduct()">Add More Product</button>
+                </div>
+            </div>
+            <div class="col-12 btn-group">
+                <div class="col-6 form-group">
+                    <div class="col-6-group text-right p-2">
+                        <a asp-action="Index" class="btn btn-secondary">&nbsp;Back to List&nbsp;</a>
+                        <input id="submitForm" type="submit" value="Add Sales Info" class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+
+    function DeleteItem(btn) {
+        $(btn).closest('tr').remove();
+    }
+
+    function AddProduct() {
+        var lastRowIndex = parseInt($("#hdnLastIndex").val());
+        var newRow = '<tr>' +
+            '<td><input type="text" class="form-control" name="SalesDetails[' + lastRowIndex + '].ProductCode" /></td>' +
+            '<td><input type="text" class="form-control" name="SalesDetails[' + lastRowIndex + '].ProductName" /></td>' +
+            '<td><input type="number" class="form-control" name="SalesDetails[' + lastRowIndex + '].Price" /></td>' +
+            '<td><input type="number" class="form-control" name="SalesDetails[' + lastRowIndex + '].Quantity" /></td>' +
+            '<td><button type="button" class="btn btn-danger" onclick="DeleteItem(this)">Delete</button></td>' +
+            '</tr>';
+        $("#ExpTable tbody").append(newRow);
+        $("#hdnLastIndex").val(lastRowIndex + 1);
+    }
+
+    $("#createForm").submit(function (event) {
+        event.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            type: "post",
+            url: "/SalesMaster/Create",
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (data) {
+                alert("Created");
+            },
+            error: function (err) {
+                alert("Error Occurred");
+            }
+        });
+    });
+</script>
